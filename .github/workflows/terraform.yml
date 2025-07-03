@@ -19,19 +19,19 @@ jobs:
       uses: hashicorp/setup-terraform@v3
 
     - name: Write OCI config & private key
-        run: |
-          mkdir -p ~/.oci
-          echo "${{ secrets.OCI_PRIVATE_KEY }}" > ~/.oci/oci_api_key.pem
-          chmod 600 ~/.oci/oci_api_key.pem
+      run: |
+        mkdir -p ~/.oci
+        echo "${{ secrets.OCI_PRIVATE_KEY }}" > ~/.oci/oci_api_key.pem
+        chmod 600 ~/.oci/oci_api_key.pem
 
-          cat > ~/.oci/config <<EOF
-          [DEFAULT]
-          user=${TF_VAR_USER_OCID}
-          fingerprint=${TF_VAR_FINGERPRINT}
-          key_file=~/.oci/oci_api_key.pem
-          tenancy=${TF_VAR_TENANCY_OCID}
-          region=${TF_VAR_REGION}
-          EOF
+        cat > ~/.oci/config <<EOF
+        [DEFAULT]
+        user=${TF_VAR_USER_OCID}
+        fingerprint=${TF_VAR_FINGERPRINT}
+        key_file=~/.oci/oci_api_key.pem
+        tenancy=${TF_VAR_TENANCY_OCID}
+        region=${TF_VAR_REGION}
+        EOF
 
     - name: Terraform Init
       run: terraform init
