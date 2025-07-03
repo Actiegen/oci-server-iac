@@ -43,7 +43,7 @@ jobs:
     - name: Run an Oracle Cloud Infrastructure (OCI) CLI command
       uses: oracle-actions/run-oci-cli-command@v1.3.2
       with:
-          command: 'oci os ns get'
+        command: 'oci os ns get'
 
     - name: Terraform Init
       run: |
