@@ -34,7 +34,18 @@ jobs:
         EOF
 
     - name: Terraform Init
-      run: terraform init
+      run: |
+        terraform init \
+          -backend-config="namespace=${{ secrets.TF_VAR_NAMESPACE }}" \
+          -backend-config="bucket=${{ secrets.TF_VAR_BUCKET }}" \
+          -backend-config="region=${{ secrets.TF_VAR_REGION }}" \
+          -backend-config="key=terraform.tfstate" \
+          -backend-config="compartment_id=${{ secrets.TF_VAR_COMPARTMENT_ID }}" \
+          -backend-config="user_ocid=${{ secrets.TF_VAR_USER_OCID }}" \
+          -backend-config="fingerprint=${{ secrets.TF_VAR_FINGERPRINT }}" \
+          -backend-config="private_key_path=~/.oci/oci_api_key.pem" \
+          -backend-config="auth=${{ secrets.TF_VAR_AUTH }}" \
+          -backend-config="tenancy_ocid=${{ secrets.TF_VAR_tenancy_ocid }}"
 
     - name: Terraform Validate
       run: terraform validate
