@@ -37,12 +37,12 @@ jobs:
       run: |
         terraform init \
           -backend-config="region=${{ secrets.TF_VAR_REGION }}" \
+          -backend-config="tenancy_ocid=${{ secrets.TF_VAR_tenancy_ocid }}"
           -backend-config="key=terraform.tfstate" \
           -backend-config="user_ocid=${{ secrets.TF_VAR_USER_OCID }}" \
           -backend-config="fingerprint=${{ secrets.TF_VAR_FINGERPRINT }}" \
           -backend-config="private_key_path=~/.oci/oci_api_key.pem" \
-          -backend-config="auth=ApiKey" \
-          -backend-config="tenancy_ocid=${{ secrets.TF_VAR_tenancy_ocid }}"
+          -backend-config="auth=ApiKey" 
 
     - name: Terraform Validate
       run: terraform validate
