@@ -7,9 +7,9 @@ This project automates the deployment of a virtual machine on Oracle Cloud Infra
 - 🏗️ Provisions a VM instance (e.g. `VM.Standard.E2.1.Micro`)
 - 🌐 Configures networking (VCN, Subnet)
 - 🔐 Adds SSH access
-- 🐳 Installs Docker
-- 📦 Deploys containers automatically (e.g., via `cloud-init` or remote-exec)
-- 🔄 GitHub Actions (coming soon) to apply Terraform automatically
+- 🐳 Installs Docker -- In progress
+- 📦 Deploys containers automatically (e.g., via `cloud-init` or remote-exec) -- In progress
+- 🔄 GitHub Actions (coming soon) to apply Terraform automatically -- In progress
 
 ---
 
@@ -21,12 +21,4 @@ This project automates the deployment of a virtual machine on Oracle Cloud Infra
 - An API Key configured for the CLI
 - Your OCI credentials set up at `~/.oci/config`
 
----
 
-## 🔧 Setup Instructions
-
-### 1. Clone the repository
-
-```bash
-git clone https://github.com/your-username/oci-server-iac.git
-cd oci-server-iac
