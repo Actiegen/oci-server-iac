@@ -1,38 +1,47 @@
-# name: Terraform OCI Provision
+name: Terraform OCI Provision
 
-# on:
-#   push:
-#     branches:
-#       - main
+on:
+  push:
+    branches:
+      - main
 
-# jobs:
-#   terraform:
-#     name: Apply Terraform
-#     runs-on: ubuntu-latest
+jobs:
+  terraform:
+    name: Apply Terraform
+    runs-on: ubuntu-latest
 
-#     steps:
-#     - name: Checkout code
-#       uses: actions/checkout@v3
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
 
-#     - name: Setup Terraform
-#       uses: hashicorp/setup-terraform@v3
+    - name: Setup Terraform
+      uses: hashicorp/setup-terraform@v3
 
-#     - name: Terraform Init
-#       run: terraform init
+    - name: Terraform Init
+      run: terraform init
 
-#     - name: Terraform Validate
-#       run: terraform validate
+    - name: Terraform Validate
+      run: terraform validate
 
-#     - name: Terraform Plan
-#       run: terraform plan
+    - name: Terraform Plan
+      run: terraform plan
 
-#     - name: Terraform Apply
-#       run: terraform apply -auto-approve
+    - name: Terraform Apply
+      run: terraform apply -auto-approve
 
-#       env:
-#         TF_VAR_availability_domain: ${{ secrets.OCI_AVAILABILITY_DOMAIN }}
-#         TF_VAR_compartment_id: ${{ secrets.OCI_COMPARTMENT_ID }}
-#         TF_VAR_shape: ${{ secrets.OCI_SHAPE }}
-#         TF_VAR_subnet_id: ${{ secrets.OCI_SUBNET_ID }}
-#         TF_VAR_ssh_public_key: ${{ secrets.OCI_SSH_PUBLIC_KEY }}
-#         TF_VAR_source_image_id: ${{ secrets.OCI_IMAGE_ID }}
+      env:
+        TF_VAR_availability_domain: ${{ secrets.TF_VAR_availability_domain }}
+        TF_VAR_compartment_id: ${{ secrets.TF_VAR_compartment_id }}
+        TF_VAR_shape: ${{ secrets.TF_VAR_shape }}
+        TF_VAR_subnet_id: ${{ secrets.TF_VAR_subnet_id }}
+        TF_VAR_ssh_public_key: ${{ secrets.TF_VAR_ssh_public_key }}
+        TF_VAR_source_image_id: ${{ secrets.TF_VAR_source_image_id }}
+        TF_VAR_display_name: ${{ secrets.TF_VAR_display_name }}
+        TF_VAR_bucket: ${{ secrets.TF_VAR_bucket }}
+        TF_VAR_namespace: ${{ secrets.TF_VAR_namespace }}
+        TF_VAR_tenancy_ocid: ${{ secrets.TF_VAR_tenancy_ocid }}
+        TF_VAR_user_ocid: ${{ secrets.TF_VAR_user_ocid }}
+        TF_VAR_fingerprint: ${{ secrets.TF_VAR_fingerprint }}
+        TF_VAR_private_key_path: ${{ secrets.TF_VAR_private_key_path }}
+        TF_VAR_region: ${{ secrets.TF_VAR_region }}
+        TF_VAR_auth: ${{ secrets.TF_VAR_auth }}

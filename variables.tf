@@ -4,6 +4,12 @@ variable "shape" {}
 variable "subnet_id" {}
 variable "ssh_public_key" {}
 variable "source_image_id" {}
-variable "display_name" {
-}
-
+variable "display_name" {}
+variable "bucket" {}
+variable "namespace" {}
+variable "tenancy_ocid" {}
+variable "user_ocid" {}
+variable "fingerprint" {}
+variable "private_key_path" {}
+variable "region" {}
+variable "auth" {}
