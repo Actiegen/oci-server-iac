@@ -11,6 +11,28 @@ jobs:
     name: Apply Terraform
     runs-on: ubuntu-latest
 
+    env:
+        TF_VAR_availability_domain: ${{ secrets.TF_VAR_availability_domain }}
+        TF_VAR_compartment_id: ${{ secrets.TF_VAR_compartment_id }}
+        TF_VAR_shape: ${{ secrets.TF_VAR_shape }}
+        TF_VAR_subnet_id: ${{ secrets.TF_VAR_subnet_id }}
+        TF_VAR_ssh_public_key: ${{ secrets.TF_VAR_ssh_public_key }}
+        TF_VAR_source_image_id: ${{ secrets.TF_VAR_source_image_id }}
+        TF_VAR_display_name: ${{ secrets.TF_VAR_display_name }}
+        TF_VAR_bucket: ${{ secrets.TF_VAR_bucket }}
+        TF_VAR_namespace: ${{ secrets.TF_VAR_namespace }}
+        TF_VAR_tenancy_ocid: ${{ secrets.TF_VAR_tenancy_ocid }}
+        TF_VAR_user_ocid: ${{ secrets.TF_VAR_user_ocid }}
+        TF_VAR_fingerprint: ${{ secrets.TF_VAR_fingerprint }}
+        TF_VAR_private_key_path: ${{ secrets.TF_VAR_private_key_path }}
+        TF_VAR_region: ${{ secrets.TF_VAR_region }}
+        TF_VAR_auth: ${{ secrets.TF_VAR_auth }}
+        OCI_CLI_USER: ${{ secrets.OCI_CLI_USER }}
+        OCI_CLI_TENANCY: ${{ secrets.OCI_CLI_TENANCY }}
+        OCI_CLI_FINGERPRINT: ${{ secrets.OCI_CLI_FINGERPRINT }}
+        OCI_CLI_KEY_CONTENT: ${{ secrets.OCI_CLI_KEY_CONTENT }}
+        OCI_CLI_REGION: ${{ secrets.OCI_CLI_REGION }}
+
     steps:
     - name: Checkout code
       uses: actions/checkout@v3
@@ -40,20 +62,3 @@ jobs:
 
     - name: Terraform Apply
       run: terraform apply -auto-approve
-
-      env:
-        TF_VAR_availability_domain: ${{ secrets.TF_VAR_availability_domain }}
-        TF_VAR_compartment_id: ${{ secrets.TF_VAR_compartment_id }}
-        TF_VAR_shape: ${{ secrets.TF_VAR_shape }}
-        TF_VAR_subnet_id: ${{ secrets.TF_VAR_subnet_id }}
-        TF_VAR_ssh_public_key: ${{ secrets.TF_VAR_ssh_public_key }}
-        TF_VAR_source_image_id: ${{ secrets.TF_VAR_source_image_id }}
-        TF_VAR_display_name: ${{ secrets.TF_VAR_display_name }}
-        TF_VAR_bucket: ${{ secrets.TF_VAR_bucket }}
-        TF_VAR_namespace: ${{ secrets.TF_VAR_namespace }}
-        TF_VAR_tenancy_ocid: ${{ secrets.TF_VAR_tenancy_ocid }}
-        TF_VAR_user_ocid: ${{ secrets.TF_VAR_user_ocid }}
-        TF_VAR_fingerprint: ${{ secrets.TF_VAR_fingerprint }}
-        TF_VAR_private_key_path: ${{ secrets.TF_VAR_private_key_path }}
-        TF_VAR_region: ${{ secrets.TF_VAR_region }}
-        TF_VAR_auth: ${{ secrets.TF_VAR_auth }}
