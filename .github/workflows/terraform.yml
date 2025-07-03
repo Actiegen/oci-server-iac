@@ -41,7 +41,7 @@ jobs:
           -backend-config="user_ocid=${{ secrets.TF_VAR_USER_OCID }}" \
           -backend-config="fingerprint=${{ secrets.TF_VAR_FINGERPRINT }}" \
           -backend-config="private_key_path=~/.oci/oci_api_key.pem" \
-          -backend-config="auth=${{ secrets.TF_VAR_AUTH }}" \
+          -backend-config="auth=ApiKey" \
           -backend-config="tenancy_ocid=${{ secrets.TF_VAR_tenancy_ocid }}"
 
     - name: Terraform Validate
