@@ -127,6 +127,7 @@ jobs:
             -backend-config="private_key=${{ env.TF_VAR_private_key }}"
       
       - name: Generate Ansible inventory
+        id: ansible-host
         run: |
           IP=$(terraform output -raw instance_public_ip)
           echo "public_ip=${IP}" >> $GITHUB_OUTPUT
@@ -140,18 +141,18 @@ jobs:
 
           echo "Conteúdo do inventory.yml:"
           cat ansible/inventory.yml
-      - name: Instala o Ansible
+      - name: Installs Ansible
         run: |
           sudo apt update
           sudo apt install -y ansible
 
-      - name: Cria arquivo de chave privada
+      - name: Generate SSH key file
         run: |
           mkdir -p ~/.ssh
           echo "${{ env.TF_VAR_ssh_private_key }}" > ~/.ssh/id_rsa
           chmod 600 ~/.ssh/id_rsa
 
-      - name: Executa playbook Ansible
+      - name: Execute Ansible playbook
         env:
           ANSIBLE_HOST_KEY_CHECKING: False
           WG_HOST: ${{ steps.ansible-host.outputs.public_ip }}
