@@ -56,11 +56,11 @@ jobs:
           -backend-config="private_key=${{ secrets.TF_VAR_PRIVATE_KEY }}" \
           -backend-config="auth=ApiKey" 
 
-    # - name: Terraform Validate
-    #   run: terraform validate
+    - name: Terraform Validate
+      run: terraform validate
 
-    # - name: Terraform Plan
-    #   run: terraform plan
+    - name: Terraform Plan
+      run: terraform plan
 
     # - name: Terraform Apply
     #   run: terraform apply -auto-approve
