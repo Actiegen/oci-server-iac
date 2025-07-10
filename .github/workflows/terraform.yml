@@ -129,21 +129,14 @@ jobs:
         run: |
           IP=$(terraform output -raw instance_public_ip)
           echo "public_ip=${IP}" >> $GITHUB_OUTPUT
-          cat <<EOF > ansible/inventory.yml
-          all:
-            hosts:
-              oci-server:
-                ansible_host: $IP
-                ansible_user: ubuntu
-          EOF
-          echo "Conteúdo do inventory.yml:"
-          cat ansible/inventory.yml
 
-      - name: Run Ansible Playbook
+      - name: Run Ansible playbook
         uses: dawidd6/action-ansible-playbook@v4
         with:
           playbook: ansible/playbook.yml
-          inventory: ansible/inventory.yml
+          inventory: |
+            [all]
+            oci-server ansible_host=${{ steps.tf-output.outputs.public_ip }} ansible_user=ubuntu
           key: ${{ env.TF_VAR_ssh_private_key }}
 
 
