@@ -1,3 +1,11 @@
+name: Terraform OCI Provision
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+
 jobs:
   my-instances:
     runs-on: ubuntu-latest
