@@ -132,12 +132,13 @@ jobs:
 
       - name: Run Ansible Playbook
         uses: dawidd6/action-ansible-playbook@v4
+        env:
+          ANSIBLE_HOST_KEY_CHECKING: False
         with:
           playbook: ansible/playbook.yml
           inventory: |
             [oci-server]
             ${{ steps.tf-output.outputs.public_ip }} ansible_user=ubuntu
-          known_hosts: ${{ env.TF_VAR_ssh_private_key }}
           key: ${{ env.TF_VAR_ssh_public_key }}
 
       # - name: Generate Ansible inventory
