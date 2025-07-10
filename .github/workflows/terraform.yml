@@ -51,7 +51,6 @@ jobs:
         terraform init \
           -backend-config="region=${{ vars.TF_VAR_REGION }}" \
           -backend-config="tenancy_ocid=${{ secrets.TF_VAR_TENANCY_OCID }}" \
-          -backend-config="key=terraform.tfstate" \
           -backend-config="user_ocid=${{ secrets.TF_VAR_USER_OCID }}" \
           -backend-config="fingerprint=${{ secrets.TF_VAR_FINGERPRINT }}" \
           -backend-config="private_key=${{ secrets.TF_VAR_PRIVATE_KEY }}" \
