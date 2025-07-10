@@ -21,6 +21,7 @@ env:
   TF_VAR_region: ${{ vars.TF_VAR_region }}
   TF_VAR_auth: ${{ vars.TF_VAR_auth }}
   WG_HOST: ${{ secrets.WG_HOST }}
+  WG_PASSWORD: ${{ secrets.WG_PASSWORD }}
 
 jobs:
 
@@ -125,53 +126,36 @@ jobs:
             -backend-config="fingerprint=${{ env.TF_VAR_fingerprint }}" \
             -backend-config="private_key=${{ env.TF_VAR_private_key }}"
       
-      - name: Update Ansible inventory
-        id: ansible-host
+      - name: Generate Ansible inventory
         run: |
           IP=$(terraform output -raw instance_public_ip)
           echo "public_ip=${IP}" >> $GITHUB_OUTPUT
+          cat > ansible/inventory.yml <<EOF
+          all:
+            hosts:
+              oci-server:
+                ansible_host: $IP
+                ansible_user: ubuntu
+          EOF
 
-      - name: Run Ansible Playbook
-        uses: dawidd6/action-ansible-playbook@v4
+          echo "Conteúdo do inventory.yml:"
+          cat ansible/inventory.yml
+      - name: Instala o Ansible
+        run: |
+          sudo apt update
+          sudo apt install -y ansible
+
+      - name: Cria arquivo de chave privada
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ env.TF_VAR_ssh_private_key }}" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+
+      - name: Executa playbook Ansible
         env:
           ANSIBLE_HOST_KEY_CHECKING: False
           WG_HOST: ${{ steps.ansible-host.outputs.public_ip }}
-        with:
-          playbook: ansible/playbook.yml
-          inventory: |
-            [oci-server]
-            ${{ steps.ansible-host.outputs.public_ip }} ansible_user=ubuntu
-          known_hosts: ${{ env.TF_VAR_ssh_public_key }}
-          key: ${{ env.TF_VAR_ssh_private_key }}
-
-      # - name: Generate Ansible inventory
-      #   run: |
-      #     IP=$(terraform output -raw instance_public_ip)
-      #     echo "public_ip=${IP}" >> $GITHUB_OUTPUT
-      #     cat > ansible/inventory.yml <<EOF
-      #     all:
-      #       hosts:
-      #         oci-server:
-      #           ansible_host: $IP
-      #           ansible_user: ubuntu
-      #     EOF
-
-      #     echo "Conteúdo do inventory.yml:"
-      #     cat ansible/inventory.yml
-      # - name: Instala o Ansible
-      #   run: |
-      #     sudo apt update
-      #     sudo apt install -y ansible
-
-      # - name: Cria arquivo de chave privada
-      #   run: |
-      #     mkdir -p ~/.ssh
-      #     echo "${{ env.TF_VAR_ssh_private_key }}" > ~/.ssh/id_rsa
-      #     chmod 600 ~/.ssh/id_rsa
-
-      # - name: Executa playbook Ansible
-      #   env:
-      #       ANSIBLE_HOST_KEY_CHECKING: False
-      #   run: |
-      #     ansible-playbook -i ansible/inventory.yml ansible/playbook.yml
+          WG_PASSWORD: ${{ env.WG_PASSWORD }}
+        run: |
+          ansible-playbook -i ansible/inventory.yml ansible/playbook.yml
 
