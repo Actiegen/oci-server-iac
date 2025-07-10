@@ -129,7 +129,6 @@ jobs:
         run: |
           IP=$(terraform output -raw instance_public_ip)
           echo "public_ip=${IP}" >> $GITHUB_OUTPUT
-          cat ansible/inventory.yml
 
       - name: Run Ansible Playbook
         uses: dawidd6/action-ansible-playbook@v4
