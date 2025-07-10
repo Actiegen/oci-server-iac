@@ -134,6 +134,10 @@ jobs:
                 ansible_host: $IP
                 ansible_user: ubuntu
           EOF
+      - name: Verificar conteúdo do inventory
+        run: |
+          echo "Conteúdo do inventory.yml:"
+          cat ansible/inventory.yml
 
       - name: Run Ansible Playbook
         uses: dawidd6/action-ansible-playbook@v4
