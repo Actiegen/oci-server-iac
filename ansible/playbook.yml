@@ -7,37 +7,37 @@
 
   tasks:
     - name: Install dependencies
-      apt:
+      ansible.builtin.apt:
         name:
           - ca-certificates
           - curl
         state: present
-        update_cache: yes
+        update_cache: true
 
     - name: Add Docker GPG key
-      apt_key:
+      ansible.builtin.apt_key:
         url: https://download.docker.com/linux/ubuntu/gpg
         state: present
 
     - name: Add Docker APT repository
-      apt_repository:
+      ansible.builtin.apt_repository:
         repo: deb [arch=amd64] https://download.docker.com/linux/ubuntu focal stable
         state: present
 
     - name: Install Docker
-      apt:
+      ansible.builtin.apt:
         name: docker-ce
         state: present
-        update_cache: yes
+        update_cache: true
 
     - name: Add ubuntu user to docker group
-      user:
+      ansible.builtin.user:
         name: ubuntu
         groups: docker
-        append: yes
+        append: true
 
     - name: Gerar docker-compose.yml com variáveis sensíveis
-      template:
+      ansible.builtin.template:
         src: compose/vpn-server.yml.j2
         dest: /home/ubuntu/vpn-server.yml
         owner: ubuntu
@@ -47,4 +47,6 @@
     - name: Run docker-compose up
       become: false
       become_user: ubuntu
-      shell: sudo docker compose -f /home/ubuntu/vpn-server.yml up -d
+      ansible.builtin.command: sudo docker compose -f /home/ubuntu/vpn-server.yml up -d
+      register: docker_compose_output
+      changed_when: "'Creating' in docker_compose_output.stdout or 'Starting' in docker_compose_output.stdout"
