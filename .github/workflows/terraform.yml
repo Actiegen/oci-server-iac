@@ -43,16 +43,16 @@ jobs:
             -backend-config="fingerprint=${{ env.TF_VAR_fingerprint }}" \
             -backend-config="private_key=${{ env.TF_VAR_private_key }}"
 
-  #     - name: Terraform Validate
-  #       run: terraform validate
+      - name: Terraform Validate
+        run: terraform validate
 
-  #     - name: Terraform Format Check (Lint)
-  #       run: terraform fmt -check -diff
+      - name: Terraform Format Check (Lint)
+        run: terraform fmt -check -diff
 
-  #     - name: run-ansible-lint
-  #       uses: ansible/ansible-lint@v25.6.1
-  #       with:
-  #         working_directory: ansible/
+      - name: run-ansible-lint
+        uses: ansible/ansible-lint@v25.6.1
+        with:
+          working_directory: ansible/
 
   # plan:
   #   name: 🔍 Terraform Plan
