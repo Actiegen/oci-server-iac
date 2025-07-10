@@ -35,6 +35,8 @@ Before you can run this project, ensure the following are ready:
 - Create a free account: https://www.oracle.com/cloud/free/
 - Set up your OCI credentials with the [OCI CLI](https://docs.oracle.com/en-us/iaas/Content/API/SDKDocs/cliinstall.htm)
 - Configure your CLI credentials in `~/.oci/config`
+- Configure a User with permissions to create instances and network resources
+- Configure an API Key for the User to be set up on the pipeline variables.
 
 ### 🪣 Remote State Storage (Terraform)
 
