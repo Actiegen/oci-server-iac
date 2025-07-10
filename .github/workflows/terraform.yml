@@ -151,6 +151,8 @@ jobs:
           chmod 600 ~/.ssh/id_rsa
 
       - name: Executa playbook Ansible
+        env:
+            ANSIBLE_HOST_KEY_CHECKING: False
         run: |
           ansible-playbook -i ansible/inventory.yml ansible/playbook.yml
 
