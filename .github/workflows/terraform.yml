@@ -45,10 +45,10 @@ jobs:
       - name: Terraform Format Check (Lint)
         run: terraform fmt -check -diff
 
-      - name: Ansible Lint
-        uses: ansible/ansible-lint-action@main
+      - name: run-ansible-lint
+        uses: ansible/ansible-lint@v25.6.1
         with:
-          path: ansible/
+          working_directory: ansible/
 
   plan:
     name: 🔍 Terraform Plan
