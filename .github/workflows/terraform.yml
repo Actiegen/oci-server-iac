@@ -115,7 +115,7 @@ jobs:
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v3
 
-      - name: Generate Ansible inventory
+      - name: Terraform init
         id: tf-output
         run: |
           terraform init \
@@ -125,17 +125,17 @@ jobs:
             -backend-config="fingerprint=${{ env.TF_VAR_fingerprint }}" \
             -backend-config="private_key=${{ env.TF_VAR_private_key }}"
 
+      - name: Generate Ansible inventory
+        run: |
           IP=$(terraform output -raw instance_public_ip)
           echo "public_ip=${IP}" >> $GITHUB_OUTPUT
-          cat <<EOF > inventory.yml
+          cat <<EOF > ansible/inventory.yml
           all:
             hosts:
               oci-server:
                 ansible_host: $IP
                 ansible_user: ubuntu
           EOF
-      - name: Verificar conteúdo do inventory
-        run: |
           echo "Conteúdo do inventory.yml:"
           cat ansible/inventory.yml
 
