@@ -1,10 +1,20 @@
 module "compute_instance" {
-  source             = "./modules/compute-instance"
+  source              = "./modules/compute-instance"
   availability_domain = var.availability_domain
   compartment_id      = var.compartment_id
   shape               = var.shape
-  subnet_id           = var.subnet_id
   ssh_public_key      = var.ssh_public_key
   source_image_id     = var.source_image_id
-  display_name = var.display_name
+  subnet_id           = module.network.subnet_id
+  display_name        = var.display_name
+  depends_on          = [ module.network ]
+}
+
+module "network" {
+  source                  = "./modules/network"
+  availability_domain     = var.availability_domain
+  compartment_id          = var.compartment_id
+  ssh_allowed_source_cidr = "0.0.0.0/0"
+  tcp_wireguard_port      = "51821"
+  udp_wireguard_port      = "51820"
 }

@@ -1,0 +1,50 @@
+- name: Setup Docker and deploy containers
+  hosts: oci-server
+  become: true
+  vars:
+    wg_host: "{{ lookup('env', 'WG_HOST') }}"
+    wg_password: "{{ lookup('env', 'WG_PASSWORD') }}"
+
+  tasks:
+    - name: Install dependencies
+      apt:
+        name:
+          - ca-certificates
+          - curl
+        state: present
+        update_cache: yes
+
+    - name: Add Docker GPG key
+      apt_key:
+        url: https://download.docker.com/linux/ubuntu/gpg
+        state: present
+
+    - name: Add Docker APT repository
+      apt_repository:
+        repo: deb [arch=amd64] https://download.docker.com/linux/ubuntu focal stable
+        state: present
+
+    - name: Install Docker
+      apt:
+        name: docker-ce
+        state: present
+        update_cache: yes
+
+    - name: Add ubuntu user to docker group
+      user:
+        name: ubuntu
+        groups: docker
+        append: yes
+
+    - name: Gerar docker-compose.yml com variáveis sensíveis
+      template:
+        src: compose/vpn-server.yml.j2
+        dest: /home/ubuntu/vpn-server.yml
+        owner: ubuntu
+        group: ubuntu
+        mode: '0644'
+
+    - name: Run docker-compose up
+      become: false
+      become_user: ubuntu
+      shell: sudo docker compose -f /home/ubuntu/vpn-server.yml up -d

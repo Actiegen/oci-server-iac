@@ -3,7 +3,6 @@ resource "oci_core_instance" "compute_instance" {
   compartment_id      = var.compartment_id
   shape               = var.shape
 
-
   create_vnic_details {
     subnet_id        = var.subnet_id
     assign_public_ip = true
