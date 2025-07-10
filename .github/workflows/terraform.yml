@@ -125,18 +125,32 @@ jobs:
             -backend-config="fingerprint=${{ env.TF_VAR_fingerprint }}" \
             -backend-config="private_key=${{ env.TF_VAR_private_key }}"
 
-      - name: Update Ansible inventory
+      - name: Generate Ansible inventory
         run: |
-          IP=`terraform output -raw instance_public_ip`
-          echo outputIP=$IP >> $GITHUB_OUTPUT
+          IP=$(terraform output -raw instance_public_ip)
+          echo "public_ip=${IP}" >> $GITHUB_OUTPUT
+          cat > ansible/inventory.yml <<EOF
+          all:
+            hosts:
+              oci-server:
+                ansible_host: $IP
+                ansible_user: ubuntu
+          EOF
 
-      - name: Run Ansible Playbook
-        uses: dawidd6/action-ansible-playbook@v4
-        with:
-          playbook: ansible/playbook.yml
-          inventory: |
-            [oci-server]
-            ${{ steps.tf-output.outputs.outputIP }} ansible_user=ubuntu
-          key: ${{ env.TF_VAR_ssh_private_key }}
+          echo "Conteúdo do inventory.yml:"
+          cat ansible/inventory.yml
+      - name: Instala o Ansible
+        run: |
+          sudo apt update
+          sudo apt install -y ansible
 
+      - name: Cria arquivo de chave privada
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ env.TF_VAR_ssh_private_key }}" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+
+      - name: Executa playbook Ansible
+        run: |
+          ansible-playbook -i ansible/inventory.yml ansible/playbook.yml
 
