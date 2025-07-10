@@ -36,7 +36,7 @@
         groups: docker
         append: true
 
-    - name: Gerar docker-compose.yml com variáveis sensíveis
+    - name: Generate compose file from template
       ansible.builtin.template:
         src: compose/vpn-server.yml.j2
         dest: /home/ubuntu/vpn-server.yml
