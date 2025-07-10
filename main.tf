@@ -1,9 +1,9 @@
 provider "oci" {
   tenancy_ocid = var.tenancy_ocid
-  user_ocid = var.user_ocid
-  fingerprint = var.fingerprint
-  private_key = var.private_key
-  region = var.region
+  user_ocid    = var.user_ocid
+  fingerprint  = var.fingerprint
+  private_key  = var.private_key
+  region       = var.region
 }
 module "compute_instance" {
   source              = "./modules/compute-instance"
@@ -14,7 +14,7 @@ module "compute_instance" {
   source_image_id     = var.source_image_id
   subnet_id           = module.network.subnet_id
   display_name        = var.display_name
-  depends_on          = [ module.network ]
+  depends_on          = [module.network]
 }
 
 module "network" {
