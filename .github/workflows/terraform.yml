@@ -135,8 +135,8 @@ jobs:
         with:
           playbook: ansible/playbook.yml
           inventory: |
-            [all]
-            oci-server ansible_host=${{ steps.tf-output.outputs.public_ip }} ansible_user=ubuntu
+            [oci-server]
+            ${{ steps.tf-output.outputs.public_ip }} ansible_user=ubuntu
           key: ${{ env.TF_VAR_ssh_private_key }}
 
 
