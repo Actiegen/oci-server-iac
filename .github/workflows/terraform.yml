@@ -144,6 +144,7 @@ jobs:
         uses: dawidd6/action-ansible-playbook@v4
         with:
           playbook: ansible/playbook.yml
+          inventory: .ansible_inventory
           key: ${{ env.TF_VAR_ssh_private_key }}
 
 
