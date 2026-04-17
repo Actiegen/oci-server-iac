@@ -21,7 +21,12 @@ variable "subnet_cidr_block" {
 }
 
 variable "ssh_allowed_source_cidr" {
-  description = "Source CIDR allowed for ingress rules"
+  description = "Source CIDR allowed for SSH access"
+  type        = string
+}
+
+variable "wg_allowed_source_cidr" {
+  description = "Source CIDR allowed for WireGuard VPN (UDP)"
   type        = string
 }
 

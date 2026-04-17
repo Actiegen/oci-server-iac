@@ -30,19 +30,21 @@ resource "oci_core_subnet" "subnet" {
   display_name               = "iac-server-subnet"
   availability_domain        = var.availability_domain
   route_table_id             = oci_core_route_table.route_table.id
-  security_list_ids          = [oci_core_security_list.ssh_security_list.id]
+  security_list_ids          = [oci_core_security_list.security_list.id]
   prohibit_public_ip_on_vnic = false
-  depends_on                 = [oci_core_security_list.ssh_security_list]
+  depends_on                 = [oci_core_security_list.security_list]
 }
 
-resource "oci_core_security_list" "ssh_security_list" {
+resource "oci_core_security_list" "security_list" {
   compartment_id = var.compartment_id
   vcn_id         = oci_core_vcn.vcn.id
   display_name   = "allow-ssh-and-wireguard"
 
+  # SSH — restricted to allowed source CIDR
   ingress_security_rules {
-    protocol = "6"
-    source   = var.ssh_allowed_source_cidr
+    protocol  = "6"
+    source    = var.ssh_allowed_source_cidr
+    stateless = false
 
     tcp_options {
       min = 22
@@ -50,23 +52,27 @@ resource "oci_core_security_list" "ssh_security_list" {
     }
   }
 
+  # WireGuard VPN (UDP) — restricted to allowed source CIDR
   ingress_security_rules {
-    protocol = "6"
-    source   = var.ssh_allowed_source_cidr
-
-    tcp_options {
-      min = var.tcp_wireguard_port
-      max = var.tcp_wireguard_port
-    }
-  }
-
-  ingress_security_rules {
-    protocol = "17"
-    source   = var.ssh_allowed_source_cidr
+    protocol  = "17"
+    source    = var.wg_allowed_source_cidr
+    stateless = false
 
     udp_options {
       min = var.udp_wireguard_port
       max = var.udp_wireguard_port
+    }
+  }
+
+  # WireGuard web UI (TCP) — only accessible from VPN subnet
+  ingress_security_rules {
+    protocol  = "6"
+    source    = var.vcn_cidr_block
+    stateless = false
+
+    tcp_options {
+      min = var.tcp_wireguard_port
+      max = var.tcp_wireguard_port
     }
   }
 
@@ -75,4 +81,3 @@ resource "oci_core_security_list" "ssh_security_list" {
     destination = "0.0.0.0/0"
   }
 }
-

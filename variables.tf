@@ -37,7 +37,19 @@ variable "compartment_id" {
 variable "shape" {
   description = "Compute instance shape"
   type        = string
-  default     = "VM.Standard.E2.1.Micro"
+  default     = "VM.Standard.A1.Flex"
+}
+
+variable "ocpus" {
+  description = "Number of OCPUs for flex shapes"
+  type        = number
+  default     = 4
+}
+
+variable "memory_in_gbs" {
+  description = "Amount of memory in GBs for flex shapes"
+  type        = number
+  default     = 24
 }
 
 variable "ssh_public_key" {
@@ -69,7 +81,13 @@ variable "subnet_cidr_block" {
 }
 
 variable "ssh_allowed_source_cidr" {
-  description = "Source CIDR allowed for SSH access"
+  description = "Source CIDR allowed for SSH access (use your IP/32 for best security)"
+  type        = string
+  default     = "0.0.0.0/0"
+}
+
+variable "wg_allowed_source_cidr" {
+  description = "Source CIDR allowed for WireGuard VPN UDP (use your IP/32 for best security)"
   type        = string
   default     = "0.0.0.0/0"
 }

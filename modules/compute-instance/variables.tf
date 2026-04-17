@@ -13,6 +13,16 @@ variable "shape" {
   type        = string
 }
 
+variable "ocpus" {
+  description = "Number of OCPUs for flex shapes"
+  type        = number
+}
+
+variable "memory_in_gbs" {
+  description = "Amount of memory in GBs for flex shapes"
+  type        = number
+}
+
 variable "ssh_public_key" {
   description = "SSH public key for instance access"
   type        = string

@@ -3,16 +3,60 @@
   become: true
   vars:
     wg_host: "{{ lookup('env', 'WG_HOST') }}"
-    wg_password: "{{ lookup('env', 'WG_PASSWORD') }}"
+    wg_password_hash: "{{ lookup('env', 'WG_PASSWORD_HASH') }}"
 
   tasks:
-    - name: Install dependencies
+    # --- OS Hardening ---
+
+    - name: Install security packages
       ansible.builtin.apt:
         name:
+          - unattended-upgrades
+          - fail2ban
           - ca-certificates
           - curl
         state: present
         update_cache: true
+
+    - name: Enable unattended-upgrades
+      ansible.builtin.copy:
+        dest: /etc/apt/apt.conf.d/20auto-upgrades
+        content: |
+          APT::Periodic::Update-Package-Lists "1";
+          APT::Periodic::Unattended-Upgrade "1";
+        mode: "0644"
+
+    - name: Configure fail2ban for SSH
+      ansible.builtin.copy:
+        dest: /etc/fail2ban/jail.local
+        content: |
+          [sshd]
+          enabled = true
+          port = ssh
+          filter = sshd
+          maxretry = 5
+          bantime = 3600
+          findtime = 600
+        mode: "0644"
+      notify: Restart fail2ban
+
+    - name: Disable SSH password authentication
+      ansible.builtin.lineinfile:
+        path: /etc/ssh/sshd_config
+        regexp: "^#?PasswordAuthentication"
+        line: "PasswordAuthentication no"
+        state: present
+      notify: Restart sshd
+
+    - name: Disable SSH root login
+      ansible.builtin.lineinfile:
+        path: /etc/ssh/sshd_config
+        regexp: "^#?PermitRootLogin"
+        line: "PermitRootLogin no"
+        state: present
+      notify: Restart sshd
+
+    # --- Docker Installation ---
 
     - name: Add Docker GPG key
       ansible.builtin.apt_key:
@@ -21,7 +65,7 @@
 
     - name: Add Docker APT repository
       ansible.builtin.apt_repository:
-        repo: "deb [arch=amd64] https://download.docker.com/linux/ubuntu {{ ansible_distribution_release }} stable"
+        repo: "deb [arch={{ 'arm64' if ansible_architecture == 'aarch64' else 'amd64' }}] https://download.docker.com/linux/ubuntu {{ ansible_distribution_release }} stable"
         state: present
 
     - name: Install Docker
@@ -35,6 +79,8 @@
         name: ubuntu
         groups: docker
         append: true
+
+    # --- WireGuard Deployment ---
 
     - name: Generate compose file from template
       ansible.builtin.template:
@@ -50,3 +96,14 @@
       ansible.builtin.command: sudo docker compose -f /home/ubuntu/vpn-server.yml up -d
       register: docker_compose_output
       changed_when: "'Creating' in docker_compose_output.stdout or 'Starting' in docker_compose_output.stdout"
+
+  handlers:
+    - name: Restart fail2ban
+      ansible.builtin.service:
+        name: fail2ban
+        state: restarted
+
+    - name: Restart sshd
+      ansible.builtin.service:
+        name: sshd
+        state: restarted
