@@ -9,8 +9,6 @@ env:
   TF_VAR_availability_domain: ${{ vars.TF_VAR_availability_domain }}
   TF_VAR_compartment_id: ${{ secrets.TF_VAR_compartment_id }}
   TF_VAR_shape: ${{ vars.TF_VAR_shape }}
-  TF_VAR_ocpus: ${{ vars.TF_VAR_ocpus }}
-  TF_VAR_memory_in_gbs: ${{ vars.TF_VAR_memory_in_gbs }}
   TF_VAR_ssh_public_key: ${{ secrets.TF_VAR_ssh_public_key }}
   TF_VAR_source_image_id: ${{ secrets.TF_VAR_source_image_id }}
   TF_VAR_display_name: ${{ vars.TF_VAR_display_name }}
