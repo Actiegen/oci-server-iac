@@ -1,0 +1,5 @@
+all:
+  hosts:
+    oci-server:
+      ansible_host: 167.234.253.119
+      ansible_user: ubuntu

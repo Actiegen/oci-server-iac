@@ -1,0 +1,35 @@
+name: Terraform Init
+description: Setup Terraform and initialize with OCI backend
+
+inputs:
+  region:
+    description: OCI region
+    required: true
+  tenancy_ocid:
+    description: OCI tenancy OCID
+    required: true
+  user_ocid:
+    description: OCI user OCID
+    required: true
+  fingerprint:
+    description: OCI API key fingerprint
+    required: true
+  private_key:
+    description: OCI API private key
+    required: true
+
+runs:
+  using: composite
+  steps:
+    - name: Setup Terraform
+      uses: hashicorp/setup-terraform@v3
+
+    - name: Terraform Init
+      shell: bash
+      run: |
+        terraform init \
+          -backend-config="region=${{ inputs.region }}" \
+          -backend-config="tenancy_ocid=${{ inputs.tenancy_ocid }}" \
+          -backend-config="user_ocid=${{ inputs.user_ocid }}" \
+          -backend-config="fingerprint=${{ inputs.fingerprint }}" \
+          -backend-config="private_key=${{ inputs.private_key }}"

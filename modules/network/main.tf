@@ -1,5 +1,5 @@
 resource "oci_core_vcn" "vcn" {
-  cidr_block     = "10.2.0.0/16"
+  cidr_block     = var.vcn_cidr_block
   compartment_id = var.compartment_id
   display_name   = "iac-network"
 }
@@ -8,7 +8,7 @@ resource "oci_core_internet_gateway" "ig" {
   compartment_id = var.compartment_id
   display_name   = "iac-internet-gateway"
   vcn_id         = oci_core_vcn.vcn.id
-  enabled     = true
+  enabled        = true
 }
 
 resource "oci_core_route_table" "route_table" {
@@ -24,15 +24,15 @@ resource "oci_core_route_table" "route_table" {
 }
 
 resource "oci_core_subnet" "subnet" {
-  compartment_id      = var.compartment_id
-  vcn_id              = oci_core_vcn.vcn.id
-  cidr_block          = "10.2.1.0/24"
-  display_name        = "iac-server-subnet"
-  availability_domain = var.availability_domain
-  route_table_id      = oci_core_route_table.route_table.id
-  security_list_ids   = [oci_core_security_list.ssh_security_list.id]
+  compartment_id             = var.compartment_id
+  vcn_id                     = oci_core_vcn.vcn.id
+  cidr_block                 = var.subnet_cidr_block
+  display_name               = "iac-server-subnet"
+  availability_domain        = var.availability_domain
+  route_table_id             = oci_core_route_table.route_table.id
+  security_list_ids          = [oci_core_security_list.ssh_security_list.id]
   prohibit_public_ip_on_vnic = false
-  depends_on = [ oci_core_security_list.ssh_security_list ]
+  depends_on                 = [oci_core_security_list.ssh_security_list]
 }
 
 resource "oci_core_security_list" "ssh_security_list" {
@@ -62,7 +62,7 @@ resource "oci_core_security_list" "ssh_security_list" {
 
   ingress_security_rules {
     protocol = "17"
-    source = var.ssh_allowed_source_cidr
+    source   = var.ssh_allowed_source_cidr
 
     udp_options {
       min = var.udp_wireguard_port
@@ -71,7 +71,7 @@ resource "oci_core_security_list" "ssh_security_list" {
   }
 
   egress_security_rules {
-    protocol = "all"
+    protocol    = "all"
     destination = "0.0.0.0/0"
   }
 }

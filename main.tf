@@ -1,10 +1,3 @@
-provider "oci" {
-  tenancy_ocid = var.tenancy_ocid
-  user_ocid    = var.user_ocid
-  fingerprint  = var.fingerprint
-  private_key  = var.private_key
-  region       = var.region
-}
 # module "compute_instance" {
 #   source              = "./modules/compute-instance"
 #   availability_domain = var.availability_domain
@@ -21,7 +14,9 @@ provider "oci" {
 #   source                  = "./modules/network"
 #   availability_domain     = var.availability_domain
 #   compartment_id          = var.compartment_id
-#   ssh_allowed_source_cidr = "0.0.0.0/0"
-#   tcp_wireguard_port      = "51821"
-#   udp_wireguard_port      = "51820"
+#   vcn_cidr_block          = var.vcn_cidr_block
+#   subnet_cidr_block       = var.subnet_cidr_block
+#   ssh_allowed_source_cidr = var.ssh_allowed_source_cidr
+#   tcp_wireguard_port      = var.tcp_wireguard_port
+#   udp_wireguard_port      = var.udp_wireguard_port
 # }
