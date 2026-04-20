@@ -3,20 +3,31 @@
   become: true
   vars:
     wg_host: "{{ lookup('env', 'WG_HOST') }}"
-    wg_password_hash: "{{ lookup('env', 'WG_PASSWORD_HASH') }}"
+    wg_password: "{{ lookup('env', 'WG_PASSWORD') }}"
 
   tasks:
     # --- OS Hardening ---
 
-    - name: Install security packages
+    - name: Install security and kernel packages
       ansible.builtin.apt:
         name:
           - unattended-upgrades
           - fail2ban
           - ca-certificates
           - curl
+          - "linux-modules-extra-{{ ansible_kernel }}"
         state: present
         update_cache: true
+
+    - name: Ensure ip6_tables loads on boot
+      ansible.builtin.copy:
+        dest: /etc/modules-load.d/ip6_tables.conf
+        content: "ip6_tables\n"
+        mode: "0644"
+
+    - name: Load ip6_tables module now
+      ansible.builtin.command: modprobe ip6_tables
+      changed_when: false
 
     - name: Enable unattended-upgrades
       ansible.builtin.copy:
@@ -55,6 +66,66 @@
         line: "PermitRootLogin no"
         state: present
       notify: Restart sshd
+
+    # --- Shell Environment ---
+
+    - name: Install zsh and git
+      ansible.builtin.apt:
+        name:
+          - zsh
+          - git
+        state: present
+
+    - name: Set fastfetch architecture
+      ansible.builtin.set_fact:
+        fastfetch_arch: "{{ 'aarch64' if ansible_architecture == 'aarch64' else 'amd64' }}"
+
+    - name: Check if fastfetch is installed
+      ansible.builtin.command: which fastfetch
+      register: fastfetch_check
+      changed_when: false
+      failed_when: false
+
+    - name: Install fastfetch from GitHub release
+      ansible.builtin.apt:
+        deb: "https://github.com/fastfetch-cli/fastfetch/releases/latest/download/fastfetch-linux-{{ fastfetch_arch }}.deb"
+        state: present
+      when: fastfetch_check.rc != 0
+
+    - name: Set ubuntu default shell to zsh
+      ansible.builtin.user:
+        name: ubuntu
+        shell: /usr/bin/zsh
+
+    - name: Check if oh-my-zsh is installed
+      ansible.builtin.stat:
+        path: /home/ubuntu/.oh-my-zsh
+      register: oh_my_zsh
+
+    - name: Install oh-my-zsh for ubuntu
+      become: true
+      become_user: ubuntu
+      ansible.builtin.shell: |
+        sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" "" --unattended
+      when: not oh_my_zsh.stat.exists
+      changed_when: true
+
+    - name: Set oh-my-zsh theme to cloud
+      become: true
+      become_user: ubuntu
+      ansible.builtin.lineinfile:
+        path: /home/ubuntu/.zshrc
+        regexp: '^ZSH_THEME='
+        line: 'ZSH_THEME="cloud"'
+        state: present
+
+    - name: Run fastfetch on zsh login
+      become: true
+      become_user: ubuntu
+      ansible.builtin.lineinfile:
+        path: /home/ubuntu/.zshrc
+        line: fastfetch
+        state: present
 
     # --- Docker Installation ---
 
@@ -112,5 +183,5 @@
 
     - name: Restart sshd
       ansible.builtin.service:
-        name: sshd
+        name: ssh
         state: restarted

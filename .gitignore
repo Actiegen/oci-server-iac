@@ -6,3 +6,4 @@ terraform.tfvars
 .env
 .vscode/
 .ansible/
+retry-apply.sh
