@@ -67,6 +67,22 @@
         state: present
       notify: Restart sshd
 
+    - name: Set SSH client keepalive interval
+      ansible.builtin.lineinfile:
+        path: /etc/ssh/sshd_config
+        regexp: "^#?ClientAliveInterval"
+        line: "ClientAliveInterval 60"
+        state: present
+      notify: Restart sshd
+
+    - name: Set SSH client keepalive count max
+      ansible.builtin.lineinfile:
+        path: /etc/ssh/sshd_config
+        regexp: "^#?ClientAliveCountMax"
+        line: "ClientAliveCountMax 3"
+        state: present
+      notify: Restart sshd
+
     # --- Shell Environment ---
 
     - name: Install zsh and git
