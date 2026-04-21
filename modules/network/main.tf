@@ -2,6 +2,7 @@ resource "oci_core_vcn" "vcn" {
   cidr_block     = var.vcn_cidr_block
   compartment_id = var.compartment_id
   display_name   = "iac-network"
+  is_ipv6enabled = true
 }
 
 resource "oci_core_internet_gateway" "ig" {
@@ -21,12 +22,19 @@ resource "oci_core_route_table" "route_table" {
     destination_type  = "CIDR_BLOCK"
     network_entity_id = oci_core_internet_gateway.ig.id
   }
+
+  route_rules {
+    destination       = "::/0"
+    destination_type  = "CIDR_BLOCK"
+    network_entity_id = oci_core_internet_gateway.ig.id
+  }
 }
 
 resource "oci_core_subnet" "subnet" {
   compartment_id             = var.compartment_id
   vcn_id                     = oci_core_vcn.vcn.id
   cidr_block                 = var.subnet_cidr_block
+  ipv6cidr_block             = cidrsubnet(oci_core_vcn.vcn.ipv6cidr_blocks[0], 8, 0)
   display_name               = "iac-server-subnet"
   availability_domain        = var.availability_domain
   route_table_id             = oci_core_route_table.route_table.id
@@ -79,5 +87,10 @@ resource "oci_core_security_list" "security_list" {
   egress_security_rules {
     protocol    = "all"
     destination = "0.0.0.0/0"
+  }
+
+  egress_security_rules {
+    protocol    = "all"
+    destination = "::/0"
   }
 }
