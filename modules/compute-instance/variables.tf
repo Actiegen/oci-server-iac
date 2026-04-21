@@ -42,3 +42,8 @@ variable "display_name" {
   description = "Display name for the instance"
   type        = string
 }
+
+variable "boot_volume_size_in_gbs" {
+  description = "Boot volume size in GBs"
+  type        = number
+}

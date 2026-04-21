@@ -19,8 +19,9 @@ resource "oci_core_instance" "compute_instance" {
   }
 
   source_details {
-    source_type = "image"
-    source_id   = var.source_image_id
+    source_type             = "image"
+    source_id               = var.source_image_id
+    boot_volume_size_in_gbs = var.boot_volume_size_in_gbs
   }
 
   display_name = var.display_name

@@ -68,6 +68,12 @@ variable "display_name" {
   default     = "docker-instance-terraform"
 }
 
+variable "boot_volume_size_in_gbs" {
+  description = "Boot volume size in GBs for the compute instance"
+  type        = number
+  default     = 150
+}
+
 variable "vcn_cidr_block" {
   description = "CIDR block for the VCN"
   type        = string
