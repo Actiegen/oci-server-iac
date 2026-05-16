@@ -109,3 +109,9 @@ variable "udp_wireguard_port" {
   type        = number
   default     = 51820
 }
+
+variable "valheim_allowed_source_cidr" {
+  description = "Source CIDR allowed for Valheim game traffic (UDP 2456-2458)"
+  type        = string
+  default     = "0.0.0.0/0"
+}

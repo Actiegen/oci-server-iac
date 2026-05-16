@@ -84,6 +84,18 @@ resource "oci_core_security_list" "security_list" {
     }
   }
 
+  # Valheim game server (UDP) — 2456 game, 2457 steam query, 2458 backup
+  ingress_security_rules {
+    protocol  = "17"
+    source    = var.valheim_allowed_source_cidr
+    stateless = false
+
+    udp_options {
+      min = 2456
+      max = 2458
+    }
+  }
+
   egress_security_rules {
     protocol    = "all"
     destination = "0.0.0.0/0"

@@ -39,3 +39,8 @@ variable "udp_wireguard_port" {
   description = "UDP port for WireGuard VPN"
   type        = number
 }
+
+variable "valheim_allowed_source_cidr" {
+  description = "Source CIDR allowed for Valheim game traffic (UDP 2456-2458)"
+  type        = string
+}
